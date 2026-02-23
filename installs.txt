@@ -1,0 +1,5 @@
+npm i
+npm i react-dom 
+npm i react-router-dom 
+npm i bootstrap 
+npm i react-icons 
