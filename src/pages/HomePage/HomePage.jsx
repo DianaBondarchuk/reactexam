@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import CarList from "../../components/CarList/CarList";
-import Filter from "../../components/Filter/FIlter";
+import Filter from "../../components/Filter/Filter"; // ← тут була помилка (FIlter)
 import { useNavigate } from "react-router-dom";
 
 function HomePage() {
+  const [allCars, setAllCars] = useState([]);
   const [cars, setCars] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     let stored = JSON.parse(localStorage.getItem("cars"));
+
     if (!stored || stored.length === 0) {
       stored = [
         {
           id: 1,
-          name: "BMW X5",
           manufacturer: "BMW",
+          model: "X5",
           year: 2021,
           volume: 3.0,
           price: 60000,
@@ -24,8 +26,8 @@ function HomePage() {
         },
         {
           id: 2,
-          name: "Audi A6",
           manufacturer: "Audi",
+          model: "A6",
           year: 2020,
           volume: 2.5,
           price: 45000,
@@ -35,8 +37,8 @@ function HomePage() {
         },
         {
           id: 3,
-          name: "Toyota Camry",
           manufacturer: "Toyota",
+          model: "Camry",
           year: 2022,
           volume: 2.5,
           price: 30000,
@@ -46,8 +48,8 @@ function HomePage() {
         },
         {
           id: 4,
-          name: "Mercedes-Benz C300",
           manufacturer: "Mercedes-Benz",
+          model: "C300",
           year: 2021,
           volume: 2.0,
           price: 52000,
@@ -57,8 +59,8 @@ function HomePage() {
         },
         {
           id: 5,
-          name: "Ford Mustang",
           manufacturer: "Ford",
+          model: "Mustang",
           year: 2025,
           volume: 5.0,
           price: 55000,
@@ -68,8 +70,8 @@ function HomePage() {
         },
         {
           id: 6,
-          name: "Hyundai Tucson",
           manufacturer: "Hyundai",
+          model: "Tucson",
           year: 2022,
           volume: 2.0,
           price: 27000,
@@ -79,8 +81,8 @@ function HomePage() {
         },
         {
           id: 7,
-          name: "Tesla Model 3",
           manufacturer: "Tesla",
+          model: "Model 3",
           year: 2023,
           volume: 1.0,
           price: 40000,
@@ -90,8 +92,8 @@ function HomePage() {
         },
         {
           id: 8,
-          name: "Honda Civic",
           manufacturer: "Honda",
+          model: "Civic",
           year: 2022,
           volume: 1.8,
           price: 22000,
@@ -100,28 +102,60 @@ function HomePage() {
           image: "https://cdn.motor1.com/images/mgl/AkBE9P/s1/new-honda-civic-e-hev-hybrid-europe.jpg"
         }
       ];
+
       localStorage.setItem("cars", JSON.stringify(stored));
     }
-    
+
+    setAllCars(stored);
     setCars(stored);
   }, []);
 
   const handleDelete = (id) => {
-    const updated = cars.filter((c) => c.id !== id);
+    const updated = allCars.filter((c) => c.id !== id);
+    setAllCars(updated);
     setCars(updated);
     localStorage.setItem("cars", JSON.stringify(updated));
   };
 
   const handleFilter = (filters) => {
-    const stored = JSON.parse(localStorage.getItem("cars")) || [];
-    let filtered = stored;
-    if (filters.name) filtered = filtered.filter((c) =>c.name.toLowerCase().includes(filters.name.toLowerCase()));
-    if (filters.manufacturer) filtered = filtered.filter((c) => c.manufacturer.includes(filters.manufacturer));
-    if (filters.year) filtered = filtered.filter((c) => String(c.year) === filters.year);
-    if (filters.color) filtered = filtered.filter((c) => c.color.includes(filters.color));
-    if (filters.volume) filtered = filtered.filter((c) => String(c.volume) === filters.volume);
-    if (filters.minPrice) filtered = filtered.filter((c) => c.price >= +filters.minPrice);
-    if (filters.maxPrice) filtered = filtered.filter((c) => c.price <= +filters.maxPrice);
+    let filtered = allCars;
+
+    if (filters.name)
+      filtered = filtered.filter((c) =>
+        (c.manufacturer + " " + c.model)
+          .toLowerCase()
+          .includes(filters.name.toLowerCase())
+      );
+
+    if (filters.manufacturer)
+      filtered = filtered.filter((c) =>
+        c.manufacturer.toLowerCase().includes(filters.manufacturer.toLowerCase())
+      );
+
+    if (filters.year)
+      filtered = filtered.filter((c) =>
+        String(c.year) === filters.year
+      );
+
+    if (filters.color)
+      filtered = filtered.filter((c) =>
+        c.color.toLowerCase().includes(filters.color.toLowerCase())
+      );
+
+    if (filters.volume)
+      filtered = filtered.filter((c) =>
+        String(c.volume) === filters.volume
+      );
+
+    if (filters.minPrice)
+      filtered = filtered.filter((c) =>
+        c.price >= +filters.minPrice
+      );
+
+    if (filters.maxPrice)
+      filtered = filtered.filter((c) =>
+        c.price <= +filters.maxPrice
+      );
 
     setCars(filtered);
   };
@@ -129,15 +163,18 @@ function HomePage() {
   return (
     <div className="container mt-4">
       <h1 className="mb-4 text-center">Car Catalog</h1>
+
       <Filter onFilter={handleFilter} />
-  <div className="text-center mb-4">
-      <button
-        className="btn btn-primary"
-        onClick={() => navigate("/add")}
-      >
-        Add Car
-      </button>
-    </div>
+
+      <div className="text-center mb-4">
+        <button
+          className="btn btn-primary"
+          onClick={() => navigate("/add")}
+        >
+          Add Car
+        </button>
+      </div>
+
       <CarList cars={cars} onDelete={handleDelete} />
     </div>
   );

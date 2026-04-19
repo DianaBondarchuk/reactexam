@@ -2,8 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\public",
-    "\\src"
+    "\\src",
+    "\\src\\components",
+    "\\src\\components\\CarCard"
   ],
-  "SelectedNode": "\\index.html",
+  "SelectedNode": "\\src\\components\\CarCard\\CarCard.jsx",
   "PreviewInSolutionExplorer": false
 }
